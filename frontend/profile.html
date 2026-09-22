@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Profile — HireIQ</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="mobile-topbar">
+  <a href="index.html" class="brand"><span class="brand-mark">HQ</span>HireIQ</a>
+  <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="index.html" class="brand"><span class="brand-mark">HQ</span>HireIQ</a>
+    <nav class="side-nav">
+      <a href="dashboard.html"><span class="ico">▦</span>Dashboard</a>
+      <a href="jobs.html"><span class="ico">▤</span>Find Jobs</a>
+      <a href="resume.html"><span class="ico">▧</span>Resume Intelligence</a>
+      <a href="profile.html" class="active"><span class="ico">◍</span>Profile</a>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="side-user">
+        <div class="avatar" data-user-avatar>AM</div>
+        <div><b data-user-name>Aarav Mehta</b><span>Job Seeker</span></div>
+      </div>
+      <a href="login.html" class="logout-link" data-logout><span class="ico">⏻</span>Log out</a>
+    </div>
+  </aside>
+
+  <main class="app-main">
+    <div class="app-topbar">
+      <div>
+        <h1>Your profile</h1>
+        <p>Keep this current — it directly drives your match scores.</p>
+      </div>
+    </div>
+
+    <div class="profile-head">
+      <div class="avatar-lg" id="profileAvatar">AM</div>
+      <div class="profile-head-info">
+        <h2 id="profileName">Aarav Mehta</h2>
+        <p id="profileEmail">aarav.mehta@example.com</p>
+      </div>
+      <div style="min-width:160px;">
+        <div class="progress-label"><span>Profile completion</span><b class="mono" id="completionLabel">55%</b></div>
+        <div class="progress-track"><div class="progress-fill" id="completionBar" style="width:55%;"></div></div>
+      </div>
+    </div>
+
+    <div class="profile-tabs">
+      <button class="profile-tab active" data-tab="personal">Personal Info</button>
+      <button class="profile-tab" data-tab="skills">Skills</button>
+      <button class="profile-tab" data-tab="education">Education</button>
+      <button class="profile-tab" data-tab="experience">Experience</button>
+      <button class="profile-tab" data-tab="preferences">Career Preferences</button>
+    </div>
+
+    <form id="profileForm">
+      <!-- Personal -->
+      <div class="profile-panel active" data-panel="personal">
+        <div class="panel">
+          <div class="row-2">
+            <div class="field"><label for="fullName">Full name</label><input class="input" type="text" id="fullName" /></div>
+            <div class="field"><label for="emailField">Email address</label><input class="input" type="email" id="emailField" /></div>
+          </div>
+          <div class="row-2">
+            <div class="field"><label for="phone">Phone number</label><input class="input" type="tel" id="phone" placeholder="+91 90000 00000" /></div>
+            <div class="field"><label for="locationField">Current location</label><input class="input" type="text" id="locationField" placeholder="City, state" /></div>
+          </div>
+          <div class="field"><label for="bio">Short bio</label><textarea class="input" id="bio" rows="3" placeholder="A line or two about your background"></textarea></div>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="profile-panel" data-panel="skills">
+        <div class="panel">
+          <div class="field">
+            <label for="skillsProfileInput">Your skills</label>
+            <div class="chip-input" id="skillsChipInput">
+              <input type="text" id="skillsProfileInput" placeholder="Type a skill and press Enter" />
+            </div>
+            <span class="hint">These feed directly into your job match score.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Education -->
+      <div class="profile-panel" data-panel="education">
+        <div class="panel">
+          <div id="educationList"></div>
+          <button type="button" class="btn btn-ghost btn-sm" id="addEducation" style="margin-top:8px;">+ Add education</button>
+        </div>
+      </div>
+
+      <!-- Experience -->
+      <div class="profile-panel" data-panel="experience">
+        <div class="panel">
+          <div id="experienceList"></div>
+          <button type="button" class="btn btn-ghost btn-sm" id="addExperience" style="margin-top:8px;">+ Add experience</button>
+          <p class="hint" id="noExpHint" style="margin-top:10px;">No experience added yet — that's fine for freshers.</p>
+        </div>
+      </div>
+
+      <!-- Preferences -->
+      <div class="profile-panel" data-panel="preferences">
+        <div class="panel">
+          <div class="row-2">
+            <div class="field"><label for="targetRoleField">Target job role</label><input class="input" type="text" id="targetRoleField" /></div>
+            <div class="field">
+              <label for="experienceField">Experience level</label>
+              <select class="input" id="experienceField">
+                <option>Fresher</option><option>0-1 yrs</option><option>1-3 yrs</option><option>3-5 yrs</option><option>5+ yrs</option>
+              </select>
+            </div>
+          </div>
+          <div class="row-2">
+            <div class="field"><label for="preferredLocation">Preferred location</label><input class="input" type="text" id="preferredLocation" placeholder="e.g. Bengaluru, Remote" /></div>
+            <div class="field">
+              <label for="jobTypePref">Preferred job type</label>
+              <select class="input" id="jobTypePref">
+                <option>Full-time</option><option>Contract</option><option>Internship</option><option>Remote only</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-ghost" id="cancelEdit">Reset</button>
+        <button type="submit" class="btn btn-primary" id="saveProfileBtn">Save changes</button>
+      </div>
+    </form>
+  </main>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    let profile = null;
+    const skillsChipInput = document.getElementById("skillsChipInput");
+    const skillsProfileInput = document.getElementById("skillsProfileInput");
+    let skills = [];
+    let education = [];
+    let experienceHistory = [];
+
+    // Tabs
+    document.querySelectorAll(".profile-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".profile-tab").forEach((t) => t.classList.remove("active"));
+        document.querySelectorAll(".profile-panel").forEach((p) => p.classList.remove("active"));
+        tab.classList.add("active");
+        document.querySelector(`.profile-panel[data-panel="${tab.dataset.tab}"]`).classList.add("active");
+      });
+    });
+
+    function renderChips() {
+      skillsChipInput.querySelectorAll(".chip").forEach((c) => c.remove());
+      skills.forEach((skill, i) => {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.innerHTML = `${skill}<button type="button" data-i="${i}">×</button>`;
+        skillsChipInput.insertBefore(chip, skillsProfileInput);
+      });
+    }
+    skillsProfileInput.addEventListener("keydown", (e) => {
+      if ((e.key === "Enter" || e.key === ",") && skillsProfileInput.value.trim()) {
+        e.preventDefault();
+        const val = skillsProfileInput.value.trim().replace(/,$/, "");
+        if (val && !skills.includes(val)) skills.push(val);
+        skillsProfileInput.value = "";
+        renderChips();
+      }
+    });
+    skillsChipInput.addEventListener("click", (e) => {
+      if (e.target.matches("button[data-i]")) { skills.splice(Number(e.target.dataset.i), 1); renderChips(); }
+    });
+
+    function renderEducation() {
+      const wrap = document.getElementById("educationList");
+      wrap.innerHTML = education.map((ed, i) => `
+        <div class="entry-card">
+          <div><b>${ed.degree}</b><span>${ed.school} · ${ed.year}</span></div>
+          <button type="button" class="btn-icon" data-remove-edu="${i}" aria-label="Remove">×</button>
+        </div>`).join("") || "<p class='hint'>No education added yet.</p>";
+    }
+    function renderExperience() {
+      const wrap = document.getElementById("experienceList");
+      const hint = document.getElementById("noExpHint");
+      wrap.innerHTML = experienceHistory.map((ex, i) => `
+        <div class="entry-card">
+          <div><b>${ex.role} — ${ex.company}</b><span>${ex.duration}</span></div>
+          <button type="button" class="btn-icon" data-remove-exp="${i}" aria-label="Remove">×</button>
+        </div>`).join("");
+      hint.style.display = experienceHistory.length ? "none" : "block";
+    }
+
+    document.getElementById("addEducation").addEventListener("click", () => {
+      const degree = prompt("Degree / course title:");
+      if (!degree) return;
+      const school = prompt("Institution name:") || "";
+      const year = prompt("Years (e.g. 2021 - 2025):") || "";
+      education.push({ degree, school, year });
+      renderEducation();
+    });
+    document.getElementById("addExperience").addEventListener("click", () => {
+      const role = prompt("Job title:");
+      if (!role) return;
+      const company = prompt("Company name:") || "";
+      const duration = prompt("Duration (e.g. Jun 2023 - Present):") || "";
+      experienceHistory.push({ role, company, duration });
+      renderExperience();
+    });
+    document.getElementById("educationList").addEventListener("click", (e) => {
+      if (e.target.matches("[data-remove-edu]")) { education.splice(Number(e.target.dataset.removeEdu), 1); renderEducation(); }
+    });
+    document.getElementById("experienceList").addEventListener("click", (e) => {
+      if (e.target.matches("[data-remove-exp]")) { experienceHistory.splice(Number(e.target.dataset.removeExp), 1); renderExperience(); }
+    });
+
+    function computeCompletion() {
+      let score = 20; // base for having an account
+      if (document.getElementById("fullName").value.trim()) score += 10;
+      if (document.getElementById("phone").value.trim()) score += 10;
+      if (document.getElementById("locationField").value.trim()) score += 10;
+      if (skills.length >= 3) score += 15;
+      if (education.length) score += 15;
+      if (experienceHistory.length) score += 10;
+      if (document.getElementById("targetRoleField").value.trim()) score += 10;
+      return Math.min(score, 100);
+    }
+
+    function loadForm() {
+      document.getElementById("fullName").value = profile.name || "";
+      document.getElementById("emailField").value = profile.email || "";
+      document.getElementById("locationField").value = profile.location || "";
+      document.getElementById("targetRoleField").value = profile.targetRole || "";
+      document.getElementById("experienceField").value = profile.experience || "Fresher";
+      skills = [...(profile.skills || [])];
+      education = [...(profile.education || [])];
+      experienceHistory = [...(profile.experienceHistory || [])];
+      renderChips();
+      renderEducation();
+      renderExperience();
+
+      document.getElementById("profileName").textContent = profile.name || "Your name";
+      document.getElementById("profileEmail").textContent = profile.email || "";
+      const initials = (profile.name || "U").split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+      document.getElementById("profileAvatar").textContent = initials;
+      document.getElementById("completionLabel").textContent = `${profile.profileCompletion || 0}%`;
+      document.getElementById("completionBar").style.width = `${profile.profileCompletion || 0}%`;
+    }
+
+    (async () => {
+      profile = await fetchProfile();
+      loadForm();
+    })();
+
+    document.getElementById("cancelEdit").addEventListener("click", () => { loadForm(); showToast("Changes reset.", "info"); });
+
+    document.getElementById("profileForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("saveProfileBtn");
+      btn.disabled = true;
+      btn.textContent = "Saving...";
+
+      const completion = computeCompletion();
+      const updated = await updateProfile({
+        name: document.getElementById("fullName").value.trim(),
+        email: document.getElementById("emailField").value.trim(),
+        location: document.getElementById("locationField").value.trim(),
+        targetRole: document.getElementById("targetRoleField").value.trim(),
+        experience: document.getElementById("experienceField").value,
+        skills,
+        education,
+        experienceHistory,
+        profileCompletion: completion,
+      });
+      profile = updated;
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = "Save changes";
+        loadForm();
+        showToast("Profile saved successfully.", "success");
+      }, 500);
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Find Jobs — HireIQ</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="mobile-topbar">
+  <a href="index.html" class="brand"><span class="brand-mark">HQ</span>HireIQ</a>
+  <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="index.html" class="brand"><span class="brand-mark">HQ</span>HireIQ</a>
+    <nav class="side-nav">
+      <a href="dashboard.html"><span class="ico">▦</span>Dashboard</a>
+      <a href="jobs.html" class="active"><span class="ico">▤</span>Find Jobs</a>
+      <a href="resume.html"><span class="ico">▧</span>Resume Intelligence</a>
+      <a href="profile.html"><span class="ico">◍</span>Profile</a>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="side-user">
+        <div class="avatar" data-user-avatar>AM</div>
+        <div><b data-user-name>Aarav Mehta</b><span>Job Seeker</span></div>
+      </div>
+      <a href="login.html" class="logout-link" data-logout><span class="ico">⏻</span>Log out</a>
+    </div>
+  </aside>
+
+  <main class="app-main">
+    <div class="app-topbar">
+      <div>
+        <h1>Find jobs</h1>
+        <p>Ranked by how well each role matches your current profile.</p>
+      </div>
+    </div>
+
+    <form class="filter-bar" id="filterForm">
+      <div class="search-field">
+        <span class="ico">⌕</span>
+        <input class="input" type="text" id="searchInput" placeholder="Search by title, company or skill" />
+      </div>
+      <div class="filter-field">
+        <select class="input" id="locationFilter">
+          <option value="">All locations</option>
+          <option>Bengaluru</option>
+          <option>Pune</option>
+          <option>Hyderabad</option>
+          <option>Chennai</option>
+          <option>Remote</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <select class="input" id="experienceFilter">
+          <option value="">All experience</option>
+          <option>0-1 yrs</option>
+          <option>0-2 yrs</option>
+          <option>1-3 yrs</option>
+          <option>2-4 yrs</option>
+          <option>2-5 yrs</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <select class="input" id="typeFilter">
+          <option value="">All types</option>
+          <option>Full-time</option>
+          <option>Contract</option>
+          <option>Internship</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <select class="input" id="skillFilter">
+          <option value="">All skills</option>
+          <option>JavaScript</option>
+          <option>Python</option>
+          <option>SQL</option>
+          <option>React</option>
+          <option>AWS</option>
+          <option>Figma</option>
+        </select>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" id="clearFilters">Clear</button>
+    </form>
+
+    <div class="results-bar">
+      <span id="resultsCount">Showing 0 jobs</span>
+      <select class="sort-select" id="sortSelect">
+        <option value="match">Sort by: Best match</option>
+        <option value="recent">Sort by: Most recent</option>
+      </select>
+    </div>
+
+    <div class="job-list" id="jobList"></div>
+
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <div class="empty-ico">◌</div>
+      <h3>No jobs match these filters</h3>
+      <p>Try widening your search — remove a filter or search a broader skill.</p>
+      <button class="btn btn-primary" id="resetFromEmpty">Reset filters</button>
+    </div>
+  </main>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const jobList = document.getElementById("jobList");
+    const emptyState = document.getElementById("emptyState");
+    const resultsCount = document.getElementById("resultsCount");
+
+    const searchInput = document.getElementById("searchInput");
+    const locationFilter = document.getElementById("locationFilter");
+    const experienceFilter = document.getElementById("experienceFilter");
+    const typeFilter = document.getElementById("typeFilter");
+    const skillFilter = document.getElementById("skillFilter");
+    const sortSelect = document.getElementById("sortSelect");
+
+    function matchClass(pct) {
+      if (pct >= 80) return "badge-mint";
+      if (pct >= 60) return "badge-amber";
+      return "badge-neutral";
+    }
+
+    async function render() {
+      const filters = {
+        query: searchInput.value.trim(),
+        location: locationFilter.value,
+        experience: experienceFilter.value,
+        type: typeFilter.value,
+        skill: skillFilter.value,
+        sort: sortSelect.value,
+      };
+      const jobs = await fetchJobs(filters);
+
+      resultsCount.textContent = `Showing ${jobs.length} job${jobs.length === 1 ? "" : "s"}`;
+
+      if (jobs.length === 0) {
+        jobList.innerHTML = "";
+        emptyState.style.display = "block";
+        return;
+      }
+      emptyState.style.display = "none";
+
+      jobList.innerHTML = jobs.map((j) => {
+        const isSaved = !!j.saved;
+        const isApplied = !!j.applied;
+        return `
+        <div class="job-card ${isSaved ? "saved" : ""}" data-id="${j.id}">
+          <div class="mini-job-logo" style="width:52px;height:52px;font-size:1.1rem;">${j.company.charAt(0)}</div>
+          <div class="job-main">
+            <div class="job-top">
+              <h3>${j.title}</h3>
+              <span class="badge ${matchClass(j.match)}">${j.match}% match</span>
+              ${isApplied ? '<span class="badge badge-indigo">Applied</span>' : ""}
+            </div>
+            <div class="job-company">${j.company}</div>
+            <div class="job-meta">
+              <span>📍 ${j.location}</span>
+              <span>🕐 ${j.type}</span>
+              <span>📈 ${j.experience}</span>
+              <span>💰 ${j.salary}</span>
+              <span>${j.posted}</span>
+            </div>
+            <div class="job-skills">
+              ${j.skills.map((s) => `<span class="skill-tag">${s}</span>`).join("")}
+            </div>
+          </div>
+          <div class="job-actions">
+            <button class="btn btn-primary btn-sm apply-btn" data-id="${j.id}" ${isApplied ? "disabled" : ""}>${isApplied ? "Applied" : "Apply now"}</button>
+            <button class="btn btn-ghost btn-sm save-btn ${isSaved ? "saved" : ""}" data-id="${j.id}" data-saved="${isSaved}">${isSaved ? "★ Saved" : "☆ Save job"}</button>
+          </div>
+        </div>`;
+      }).join("");
+    }
+
+    [searchInput].forEach((el) => el.addEventListener("input", debounce(render, 250)));
+    [locationFilter, experienceFilter, typeFilter, skillFilter, sortSelect].forEach((el) => el.addEventListener("change", render));
+
+    document.getElementById("clearFilters").addEventListener("click", () => {
+      searchInput.value = "";
+      locationFilter.value = "";
+      experienceFilter.value = "";
+      typeFilter.value = "";
+      skillFilter.value = "";
+      render();
+    });
+    document.getElementById("resetFromEmpty").addEventListener("click", () => document.getElementById("clearFilters").click());
+
+    jobList.addEventListener("click", async (e) => {
+      const applyBtn = e.target.closest(".apply-btn");
+      const saveBtn = e.target.closest(".save-btn");
+
+      if (applyBtn && !applyBtn.disabled) {
+        applyBtn.disabled = true;
+        applyBtn.textContent = "Applying...";
+        const result = await applyToJob(applyBtn.dataset.id);
+        if (result) showToast("Application submitted successfully.", "success");
+        render();
+      }
+
+      if (saveBtn) {
+        const currentlySaved = saveBtn.dataset.saved === "true";
+        const result = await saveJob(saveBtn.dataset.id, currentlySaved);
+        showToast(result.saved ? "Job saved to your list." : "Job removed from saved list.", "info");
+        render();
+      }
+    });
+
+    function debounce(fn, delay) {
+      let t;
+      return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
+    }
+
+    render();
+  });
+</script>
+</body>
+</html>

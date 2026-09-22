@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Log in — HireIQ</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="auth-shell">
+  <aside class="auth-visual">
+    <a href="index.html" class="brand" style="color:#fff;"><span class="brand-mark">HQ</span>HireIQ</a>
+    <p class="quote">"I stopped applying blind. Every job now shows me exactly why it's — or isn't — a fit."
+      <span>— Early access user</span>
+    </p>
+  </aside>
+
+  <div class="auth-form-side">
+    <div class="auth-card">
+      <a href="index.html" class="brand"><span class="brand-mark">HQ</span>HireIQ</a>
+      <h1>Welcome back</h1>
+      <p>Log in to see your latest matches and resume score.</p>
+
+      <form id="loginForm" novalidate>
+        <div class="field" data-field="email">
+          <label for="email">Email address</label>
+          <input class="input" type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" />
+          <span class="error-msg">Please enter a valid email address.</span>
+        </div>
+
+        <div class="field" data-field="password">
+          <label for="password">Password</label>
+          <div class="input-group">
+            <input class="input" type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" />
+            <button type="button" class="input-toggle">Show</button>
+          </div>
+          <span class="error-msg">Please enter your password.</span>
+        </div>
+
+        <div class="form-between">
+          <label class="checkbox-row" style="margin:0;">
+            <input type="checkbox" id="remember" />
+            <span>Remember me</span>
+          </label>
+          <a href="#" id="forgotLink" style="color:var(--indigo-dark); font-weight:600;">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" id="loginBtn">Log in</button>
+
+        <div class="divider-or">or</div>
+        <p class="hint text-center" style="text-align:center;">Demo credentials: <span class="mono">demo@hireiq.io</span> / <span class="mono">demo1234</span></p>
+      </form>
+
+      <div class="form-foot">Don't have an account? <a href="signup.html">Sign up</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- Forgot password modal -->
+<div class="modal-backdrop" id="forgotModal">
+  <div class="modal">
+    <h3>Reset your password</h3>
+    <p>Enter your account email and we'll send a reset link. (Frontend prototype — no email is actually sent.)</p>
+    <div class="field" style="margin-bottom:18px;">
+      <label for="resetEmail">Email address</label>
+      <input class="input" type="email" id="resetEmail" placeholder="you@example.com" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelReset">Cancel</button>
+      <button class="btn btn-accent" id="sendReset">Send reset link</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("loginForm");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email");
+      const password = document.getElementById("password");
+      let valid = true;
+
+      if (!isValidEmail(email.value.trim())) { setFieldError(email.closest(".field"), "Please enter a valid email address."); valid = false; }
+      else clearFieldError(email.closest(".field"));
+
+      if (!password.value) { setFieldError(password.closest(".field"), "Please enter your password."); valid = false; }
+      else clearFieldError(password.closest(".field"));
+
+      if (!valid) { showToast("Please fix the highlighted fields.", "error"); return; }
+
+      const btn = document.getElementById("loginBtn");
+      btn.disabled = true;
+      btn.textContent = "Logging in...";
+
+      const result = await loginUser(email.value.trim(), password.value);
+      btn.disabled = false;
+      btn.textContent = "Log in";
+
+      if (result.success) {
+        showToast("Welcome back! Redirecting...", "success");
+        setTimeout(() => (window.location.href = "dashboard.html"), 700);
+      } else {
+        showToast(result.message || "Invalid credentials.", "error");
+      }
+    });
+
+    document.getElementById("forgotLink").addEventListener("click", (e) => { e.preventDefault(); openModal("forgotModal"); });
+    document.getElementById("cancelReset").addEventListener("click", () => closeModal("forgotModal"));
+    document.getElementById("sendReset").addEventListener("click", () => {
+      const val = document.getElementById("resetEmail").value.trim();
+      if (!isValidEmail(val)) { showToast("Enter a valid email first.", "error"); return; }
+      closeModal("forgotModal");
+      showToast("If an account exists for that email, a reset link was sent.", "success");
+    });
+  });
+</script>
+</body>
+</html>

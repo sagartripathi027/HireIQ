@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Resume Intelligence — HireIQ</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="mobile-topbar">
+  <a href="index.html" class="brand"><span class="brand-mark">HQ</span>HireIQ</a>
+  <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+</div>
+<div class="sidebar-backdrop"></div>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="index.html" class="brand"><span class="brand-mark">HQ</span>HireIQ</a>
+    <nav class="side-nav">
+      <a href="dashboard.html"><span class="ico">▦</span>Dashboard</a>
+      <a href="jobs.html"><span class="ico">▤</span>Find Jobs</a>
+      <a href="resume.html" class="active"><span class="ico">▧</span>Resume Intelligence</a>
+      <a href="profile.html"><span class="ico">◍</span>Profile</a>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="side-user">
+        <div class="avatar" data-user-avatar>AM</div>
+        <div><b data-user-name>Aarav Mehta</b><span>Job Seeker</span></div>
+      </div>
+      <a href="login.html" class="logout-link" data-logout><span class="ico">⏻</span>Log out</a>
+    </div>
+  </aside>
+
+  <main class="app-main">
+    <div class="app-topbar">
+      <div>
+        <h1>Resume Intelligence</h1>
+        <p>Upload your resume to get a score, extracted skills and specific improvements.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="upload-zone" id="uploadZone">
+        <div class="upload-ico">⇪</div>
+        <h3>Drag &amp; drop your resume here</h3>
+        <p>PDF or DOCX, up to 5MB</p>
+        <button type="button" class="btn btn-primary" id="browseBtn">Browse files</button>
+        <input type="file" id="fileInput" accept=".pdf,.doc,.docx" />
+        <div id="fileChipWrap"></div>
+      </div>
+      <div style="text-align:center; margin-top:16px;">
+        <button class="btn btn-accent" id="analyzeBtn" disabled>Analyze resume</button>
+      </div>
+    </div>
+
+    <div class="resume-results" id="resumeResults">
+      <div class="panel">
+        <div class="score-hero">
+          <div class="match-meter" id="resumeMeter">
+            <svg viewBox="0 0 150 150">
+              <circle class="track" cx="75" cy="75" r="62"></circle>
+              <circle class="value" cx="75" cy="75" r="62"></circle>
+            </svg>
+            <div class="label"><b>0%</b><span>Score</span></div>
+          </div>
+          <div class="score-hero-text">
+            <b>Resume score summary</b>
+            <p>Your resume is readable and well-structured, with a few targeted gaps against your target role: <strong id="targetRoleText">Frontend Developer</strong>.</p>
+            <a href="jobs.html" class="btn btn-primary btn-sm" style="margin-top:10px;">Find matching jobs</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div>
+          <div class="panel">
+            <div class="panel-head"><h3>Improvement recommendations</h3></div>
+            <div id="recommendationsList"></div>
+          </div>
+        </div>
+        <div>
+          <div class="panel">
+            <div class="panel-head"><h3>Extracted skills</h3></div>
+            <div class="pill-list" id="extractedSkills"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h3>Strengths</h3></div>
+            <div class="pill-list" id="strengthsList"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h3>Missing skills</h3></div>
+            <div class="pill-list" id="missingSkills"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const uploadZone = document.getElementById("uploadZone");
+    const fileInput = document.getElementById("fileInput");
+    const browseBtn = document.getElementById("browseBtn");
+    const fileChipWrap = document.getElementById("fileChipWrap");
+    const analyzeBtn = document.getElementById("analyzeBtn");
+    let selectedFile = null;
+
+    browseBtn.addEventListener("click", () => fileInput.click());
+
+    ["dragenter", "dragover"].forEach((evt) => {
+      uploadZone.addEventListener(evt, (e) => { e.preventDefault(); uploadZone.classList.add("dragover"); });
+    });
+    ["dragleave", "drop"].forEach((evt) => {
+      uploadZone.addEventListener(evt, (e) => { e.preventDefault(); uploadZone.classList.remove("dragover"); });
+    });
+    uploadZone.addEventListener("drop", (e) => {
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    });
+    fileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) handleFile(file);
+    });
+
+    function handleFile(file) {
+      const validTypes = [".pdf", ".doc", ".docx"];
+      const ext = "." + file.name.split(".").pop().toLowerCase();
+      if (!validTypes.includes(ext)) {
+        showToast("Please upload a PDF or DOCX file.", "error");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        showToast("File is too large. Max size is 5MB.", "error");
+        return;
+      }
+      selectedFile = file;
+      const sizeKb = Math.round(file.size / 1024);
+      fileChipWrap.innerHTML = `
+        <div class="file-chip">
+          <div class="f-ico">${ext.replace(".", "").toUpperCase()}</div>
+          <div><b>${file.name}</b><span>${sizeKb} KB</span></div>
+          <button type="button" id="removeFile" aria-label="Remove file">×</button>
+        </div>`;
+      document.getElementById("removeFile").addEventListener("click", () => {
+        selectedFile = null;
+        fileChipWrap.innerHTML = "";
+        analyzeBtn.disabled = true;
+        fileInput.value = "";
+      });
+      analyzeBtn.disabled = false;
+      showToast("File ready to analyze.", "success");
+    }
+
+    analyzeBtn.addEventListener("click", async () => {
+      if (!selectedFile) return;
+      analyzeBtn.disabled = true;
+      analyzeBtn.textContent = "Analyzing...";
+
+      const analysis = await uploadResume(selectedFile);
+
+      analyzeBtn.textContent = "Analyze resume";
+      analyzeBtn.disabled = false;
+      showToast("Resume analyzed successfully.", "success");
+
+      const results = document.getElementById("resumeResults");
+      results.classList.add("show");
+
+      const meter = document.getElementById("resumeMeter");
+      renderMatchMeter(meter, analysis.score);
+
+      document.getElementById("extractedSkills").innerHTML = analysis.extractedSkills.map((s) => `<span class="skill-tag">${s}</span>`).join("");
+      document.getElementById("strengthsList").innerHTML = analysis.strengths.map((s) => `<span class="skill-tag" style="background:var(--mint-dim); color:var(--mint-dark);">${s}</span>`).join("");
+      document.getElementById("missingSkills").innerHTML = analysis.missingSkills.map((s) => `<span class="skill-tag gap">${s}</span>`).join("");
+      document.getElementById("recommendationsList").innerHTML = analysis.recommendations.map((r, i) => `
+        <div class="rec-item"><div class="rec-num">${i + 1}</div><p style="margin:0; font-size:.9rem; color:var(--text-700);">${r}</p></div>
+      `).join("");
+
+      results.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    (async () => {
+      const profile = await fetchProfile();
+      const el = document.getElementById("targetRoleText");
+      if (el && profile.targetRole) el.textContent = profile.targetRole;
+    })();
+  });
+</script>
+</body>
+</html>
