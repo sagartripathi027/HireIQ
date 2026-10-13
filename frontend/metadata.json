@@ -1,0 +1,6 @@
+{
+  "name": "HireIQ — AI Interview + Learning Platform",
+  "description": "Comprehensive platform for real-time AI mock interviews with voice and webcam analysis, adaptive assessments, and curated engineering courses and revision notes.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

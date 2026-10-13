@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-charcoal: #100D14;
+    --color-plum: #24151F;
+    --color-plum-light: #321c2c;
+    --color-coral: #E879B9;
+    --color-sunset: #FF8866;
+    --color-softwhite: #F5F1F5;
+  }
+
+  body {
+    background-color: #100D14;
+    color: #F5F1F5;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+  }
+  
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Custom glow utility */
+.glow-pink-orange {
+  background: linear-gradient(135deg, #E879B9 0%, #FF8866 100%);
+}
+
+.text-gradient-neon {
+  background: linear-gradient(135deg, #F5F1F5 0%, #E879B9 55%, #FF8866 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-warm {
+  background: linear-gradient(135deg, #E879B9 0%, #FF8866 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.border-glow-subtle {
+  border: 1px solid rgba(232, 121, 185, 0.2);
+}
+
+.border-glow-subtle:hover {
+  border-color: rgba(255, 136, 102, 0.4);
+  box-shadow: 0 0 20px rgba(232, 121, 185, 0.12);
+}
+
+/* Web3 Ambient Background Grid */
+.web3-grid-pattern {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(232, 121, 185, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 136, 102, 0.04) 1px, transparent 1px);
+}
+
+/* Custom sleek scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #100D14;
+}
+::-webkit-scrollbar-thumb {
+  background: #24151F;
+  border-radius: 9999px;
+  border: 1px solid rgba(232, 121, 185, 0.2);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #E879B9;
+}
+
